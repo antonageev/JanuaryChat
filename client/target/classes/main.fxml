@@ -1,0 +1,23 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:controller="chat.client.Controller"
+      xmlns:fx="http://javafx.com/fxml">
+    <TextArea fx:id="mainArea" editable="false" VBox.vgrow="ALWAYS">
+        <font>
+            <Font size="14.0" />
+        </font></TextArea>
+    <HBox>
+        <TextField fx:id="msgField" onAction="#sendMessageAction" promptText="Введите сообщение..." HBox.hgrow="ALWAYS" onKeyReleased="#btnChange">
+            <font>
+                <Font name="Arial" size="14.0" />
+            </font>
+        </TextField>
+        <Button fx:id="btnSend" onAction="#sendMessageAction" text="Send" HBox.hgrow="ALWAYS" disable="true"/>
+    </HBox>
+</VBox>
