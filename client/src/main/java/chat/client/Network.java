@@ -27,6 +27,7 @@ public class Network {
     public void close(){
         try{
             if (in!=null){
+                System.out.println("закрытие in");
                 in.close();
             }
         } catch (IOException e){
@@ -34,6 +35,7 @@ public class Network {
         }
         try{
             if (out!=null){
+                System.out.println("закрытие out");
                 out.close();
             }
         } catch (IOException e){
@@ -41,6 +43,7 @@ public class Network {
         }
         try{
             if (socket!=null){
+                System.out.println("закрытие socket");
                 socket.close();
             }
         } catch (IOException e){
