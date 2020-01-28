@@ -45,10 +45,12 @@ public class Server {
     }
 
     public synchronized void  subscribe(ClientHandler clientHandler){
+        broadcastMsg(clientHandler.getNickname() + " подключился к чату!");
         clients.add(clientHandler);
     }
 
     public synchronized void unsubscribe (ClientHandler clientHandler){
+        broadcastMsg(clientHandler.getNickname() + " вышел из чата");
         clients.remove(clientHandler);
     }
 
