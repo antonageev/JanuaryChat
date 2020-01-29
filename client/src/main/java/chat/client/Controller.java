@@ -1,6 +1,5 @@
 package chat.client;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,14 +7,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import sun.nio.ch.Net;
 
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -37,6 +32,9 @@ public class Controller implements Initializable {
     @FXML
     HBox loginBox, msgBox;
 
+    @FXML
+    ListView<String> clientsList;
+
     private Network network;
     private boolean authenticated;
     private String nickname;
@@ -47,13 +45,20 @@ public class Controller implements Initializable {
         loginBox.setManaged(!authenticated);
         msgBox.setVisible(authenticated);
         msgBox.setManaged(authenticated);
+        clientsList.setVisible(authenticated);
+        clientsList.setManaged(authenticated);
     }
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setAuthenticated(false);
 
+    }
+
+    public void tryToConnect(){
         try {
+            if (network != null && network.isConnected()) return;
             setAuthenticated(false);
             network = new Network(8189);
             Thread t1 = new Thread(() -> {
@@ -62,6 +67,7 @@ public class Controller implements Initializable {
                         String msg = network.readMsg();
                         if (msg.startsWith("/authok")) { //authok nick1
                             nickname = msg.split(" ")[1];
+                            mainArea.appendText("Вы зашли под ником "+ nickname + "\n");
                             setAuthenticated(true);
                             break;
                         }
@@ -69,12 +75,33 @@ public class Controller implements Initializable {
                     }
                     while (true) { // цикл общения с сервером
                         String msg = network.readMsg();
-                        if (msg.equals("/end_confirm")) {
-                            System.out.println("Закрытие соединения");
-                            mainArea.appendText("Сервер прощается с вами.");
-                            break;
+                        if (msg.startsWith("/")){
+                            if (msg.startsWith("/change_nickOK ")){
+                                String[] tokens = msg.split(" ");
+                                nickname = tokens[1];
+                                continue;
+                            }
+                            if (msg.startsWith("/clients_list ")){
+                                Platform.runLater(() -> {
+                                            clientsList.getItems().clear();
+                                            String[] tokens = msg.split(" ");
+                                            for (int i = 1; i < tokens.length; i++) {
+                                                if (!nickname.equals(tokens[i])){
+                                                    clientsList.getItems().add(tokens[i]);
+                                                }
+                                            }
+                                        }
+                                );
+                                continue;
+                            }
+                            if (msg.equals("/end_confirm")) {
+                                System.out.println("Закрытие соединения");
+                                mainArea.appendText("Сервер прощается с вами.\n");
+                                break;
+                            }
+                        } else {
+                            mainArea.appendText(msg + "\n");
                         }
-                        mainArea.appendText(msg + "\n");
                     }
                 } catch (IOException e) {
                     Platform.runLater(() -> {
@@ -84,6 +111,8 @@ public class Controller implements Initializable {
                 }
                 finally {
                     network.close();
+                    setAuthenticated(false);
+                    nickname=null;
                 }
             });
 
@@ -91,7 +120,8 @@ public class Controller implements Initializable {
             t1.start();
 
         } catch (IOException e){
-            throw new RuntimeException("Невозможно подключиться к серверу");
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Невозможно подключиться к серверу");
+            alert.showAndWait();
         }
     }
 
@@ -124,12 +154,21 @@ public class Controller implements Initializable {
 
     public void tryToAuth(ActionEvent actionEvent) {
         try {
+            tryToConnect();
             network.sendMsg("/auth " + loginField.getText() + " " + passField.getText());
             loginField.clear();
             passField.clear();
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Невозможно отправить сообщение. Проверьте подключение");
             alert.showAndWait();
+        }
+    }
+
+    public void selectUserForWisp(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount()==2){
+            msgField.setText("/w "+ clientsList.getSelectionModel().getSelectedItem() + " ");
+            msgField.requestFocus();
+            msgField.selectEnd();
         }
     }
 }
