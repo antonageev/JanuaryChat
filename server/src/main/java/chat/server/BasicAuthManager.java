@@ -14,6 +14,10 @@ public class BasicAuthManager implements AuthManager {
             this.password = password;
             this.nickname = nickname;
         }
+
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
     }
 
     private List<Entry> users;
@@ -31,5 +35,17 @@ public class BasicAuthManager implements AuthManager {
             if (o.login.equals(login) && (o.password.equals(password))) return o.nickname;
         }
         return null;
+    }
+
+    @Override
+    public boolean setNewNickName(String oldNickName, String newNickName) {
+        for (Entry o : users){
+            if (o.nickname.equals(oldNickName)){
+                o.setNickname(newNickName);
+                return true;
+            }
+        }
+        System.out.println("setNewNickname() from BasicAuthManager: Пользователь с ником " + oldNickName + " не найден");
+        return false;
     }
 }

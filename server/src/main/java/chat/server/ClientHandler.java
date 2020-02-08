@@ -17,6 +17,10 @@ public class ClientHandler {
         return nickname;
     }
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public ClientHandler(Server server, Socket socket) throws IOException {
         this.server = server;
         this.socket = socket;
@@ -35,8 +39,8 @@ public class ClientHandler {
                                     continue;
                                 }
                                 nickname = nickFromAuthManager;
-                                server.subscribe(this);
                                 sendMsg("/authok " + nickname);
+                                server.subscribe(this);
                                 break;
                             } else {
                                 sendMsg("Указан неверный логин/пароль");
@@ -46,28 +50,28 @@ public class ClientHandler {
                     while (true) {
                         String msg = in.readUTF();
                         if (msg.startsWith("/")) {
+                            if (msg.startsWith("/w ")){
+                                String[] tokens = msg.split(" ", 3);
+                                server.sendPrivateMsg(this, tokens[1], tokens[2]);
+                                continue;
+                            }
+                            //в ClientHandler только проверка нового ника на пробелы
+                            // дальше закидываем задачу на смену ника вездесущему серверу
+                            if (msg.startsWith("/change_nick ")){
+                                String[] tokens = msg.split(" ");
+                                if (tokens.length > 2) {
+                                    sendMsg("Новый ник должен быть без пробелов");
+                                    continue;
+                                }
+                                server.changeNickName(this, nickname, tokens[1]);
+                            }
                             if (msg.equals("/end")) {
                                 out.writeUTF("/end_confirm");
                                 System.out.println("Запрос на выключение сервера от клиента \"/end\"... Выключение ");
-                                server.broadcastMsg(nickname + " вышел из чата");
                                 break;
                             }
-                            if (msg.startsWith("/w")){
-                                String[] tokens = msg.split(" ", 3);
-                                ClientHandler addressee = null;
-                                for (ClientHandler o: server.getClients()){
-                                    if (o.getNickname().equals(tokens[1])){
-                                        addressee = o;
-                                    }
-                                }
-                                if (addressee!=null){
-                                    server.broadcastMsg(this, addressee, "Личное от " + nickname + " k "+ addressee.getNickname()+": " + tokens[2]);
-                                } else {
-                                    sendMsg(tokens[1] + " не подключен к чату");
-                                }
-                            }
                         } else {
-                            server.broadcastMsg(nickname + ": "+ msg);
+                            server.broadcastMsg(nickname + ": "+ msg, true);
                         }
                     }
                 } catch (IOException e){

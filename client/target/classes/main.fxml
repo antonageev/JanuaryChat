@@ -6,14 +6,21 @@
 <VBox fx:controller="chat.client.Controller"
       xmlns:fx="http://javafx.com/fxml">
     <HBox fx:id="loginBox">
-        <TextField fx:id="loginField" HBox.hgrow="ALWAYS"/>
-        <PasswordField fx:id="passField" HBox.hgrow="ALWAYS" onAction="#tryToAuth"/>
-        <Button text="Войти" HBox.hgrow="ALWAYS" onAction="#tryToAuth"/>
+        <TextField fx:id="loginField" promptText="Логин" HBox.hgrow="ALWAYS"/>
+        <PasswordField fx:id="passField" promptText="Пароль" HBox.hgrow="ALWAYS" onAction="#tryToAuth"/>
+        <Button text="Войти" HBox.hgrow="ALWAYS" onAction="#tryToAuth" minWidth="100" maxWidth="100"/>
     </HBox>
-    <TextArea fx:id="mainArea" editable="false" VBox.vgrow="ALWAYS">
-        <font>
-            <Font size="14.0" />
-        </font></TextArea>
+    <HBox VBox.vgrow="ALWAYS">
+        <TextArea fx:id="mainArea" editable="false" HBox.hgrow="ALWAYS" >
+            <font>
+                <Font size="14.0" />
+            </font>
+        </TextArea>
+        <ListView fx:id="clientsList" maxWidth="200" minWidth="200" HBox.hgrow="ALWAYS" onMouseClicked="#selectUserForWisp">
+
+        </ListView>
+
+    </HBox>
     <HBox fx:id="msgBox">
         <TextField fx:id="msgField" onAction="#sendMessageAction" promptText="Введите сообщение..." HBox.hgrow="ALWAYS" onKeyReleased="#btnChange">
             <font>
