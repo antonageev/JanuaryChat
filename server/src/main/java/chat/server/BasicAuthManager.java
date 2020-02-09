@@ -1,50 +1,39 @@
 package chat.server;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class BasicAuthManager implements AuthManager {
-    private class Entry{
-        private String login;
-        private String password;
-        private String nickname;
 
-        public Entry(String login, String password, String nickname) {
-            this.login = login;
-            this.password = password;
-            this.nickname = nickname;
-        }
-
-        public void setNickname(String nickname) {
-            this.nickname = nickname;
-        }
-    }
-
-    private List<Entry> users;
-
-    public BasicAuthManager() {
-        this.users = new ArrayList<>();
-        users.add(new Entry("login1", "pass1", "user1"));
-        users.add(new Entry("login2", "pass2", "user2"));
-        users.add(new Entry("login3", "pass3", "user3"));
+    public BasicAuthManager() throws ClassNotFoundException, SQLException {
+            DBConnection.connect();
     }
 
     @Override
     public String getNickNameByLoginAndPassword(String login, String password) {
-        for (Entry o : users){
-            if (o.login.equals(login) && (o.password.equals(password))) return o.nickname;
+        try (ResultSet resultSet = DBConnection.stmt.executeQuery("SELECT nickname FROM users WHERE login = '"+login +"' AND pass ='"+password+"';")){
+            String result;
+            // Уникальность поля login и nickname контролируется на уровне БД уникальными ключами,
+            // поэтому гарантируется попадание в resultSet не более одной строки.
+            if (resultSet.next()){
+                result = resultSet.getString(1);
+                return result;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
         }
         return null;
     }
 
     @Override
     public boolean setNewNickName(String oldNickName, String newNickName) {
-        for (Entry o : users){
-            if (o.nickname.equals(oldNickName)){
-                o.setNickname(newNickName);
-                return true;
-            }
+        int result = 0;
+        try {
+            result = DBConnection.stmt.executeUpdate("UPDATE users SET nickname = '"+newNickName+"' WHERE nickname = '"+oldNickName+"';");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        if (result > 0) return true;
         System.out.println("setNewNickname() from BasicAuthManager: Пользователь с ником " + oldNickName + " не найден");
         return false;
     }

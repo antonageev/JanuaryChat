@@ -3,6 +3,7 @@ package chat.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,16 +24,25 @@ public class Server {
 
     public Server(int port){
         clients = new ArrayList<>();
-        authManager = new BasicAuthManager();
-        try (ServerSocket serverSocket = new ServerSocket(port)){
-            System.out.println("Сервер стартовал! Ожидаем подключения...");
-            while (true) {
-                Socket socket = serverSocket.accept();
-                System.out.println("Клиент подключен");
-                new ClientHandler(this, socket);
+        try {
+            // Насколько правильно открывать соеднинение конструктором BasicAuthManager() с прописанным в нем
+            // статическим DBConnection.connect(), а закрывать просто
+            // вызовом статического метода DBConnection.disconnect() ?
+            authManager = new BasicAuthManager();
+            try (ServerSocket serverSocket = new ServerSocket(port)) {
+                System.out.println("Сервер стартовал! Ожидаем подключения...");
+                while (true) {
+                    Socket socket = serverSocket.accept();
+                    System.out.println("Клиент подключен");
+                    new ClientHandler(this, socket);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e){
+        } catch (ClassNotFoundException | SQLException e){
             e.printStackTrace();
+        } finally {
+            DBConnection.disconnect();
         }
     }
 
