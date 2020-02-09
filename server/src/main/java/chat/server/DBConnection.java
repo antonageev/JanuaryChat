@@ -7,17 +7,21 @@ import java.sql.Statement;
 
 public class DBConnection {
 
-    static Connection connection;
-    static Statement stmt;
+    private Connection connection;
+    private Statement stmt;
 
-    public static void connect() throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=chat",
-                "postgres", "powerbrain");
-        stmt = connection.createStatement();
+    public Statement getStmt() {
+        return stmt;
     }
 
-    public static void disconnect(){
+    public DBConnection() throws ClassNotFoundException, SQLException {
+        Class.forName("org.postgresql.Driver");
+        this.connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=chat",
+                "postgres", "powerbrain");
+        this.stmt = connection.createStatement();
+    }
+
+    public void disconnect(){
 
         try {
             if (stmt != null) {

@@ -11,24 +11,17 @@ import java.util.List;
 
 public class Server {
     private List<ClientHandler> clients;
-    private AuthManager authManager;
+    private BasicAuthManager basicAuthManager;
     private final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public AuthManager getAuthManager() {
-        return authManager;
-    }
-
-    public List<ClientHandler> getClients() {
-        return clients;
+    public AuthManager getBasicAuthManager() {
+        return basicAuthManager;
     }
 
     public Server(int port){
         clients = new ArrayList<>();
         try {
-            // Насколько правильно открывать соеднинение конструктором BasicAuthManager() с прописанным в нем
-            // статическим DBConnection.connect(), а закрывать просто
-            // вызовом статического метода DBConnection.disconnect() ?
-            authManager = new BasicAuthManager();
+            basicAuthManager = new BasicAuthManager();
             try (ServerSocket serverSocket = new ServerSocket(port)) {
                 System.out.println("Сервер стартовал! Ожидаем подключения...");
                 while (true) {
@@ -42,7 +35,9 @@ public class Server {
         } catch (ClassNotFoundException | SQLException e){
             e.printStackTrace();
         } finally {
-            DBConnection.disconnect();
+            if (basicAuthManager != null) {
+                basicAuthManager.closeAuthConnections();
+            }
         }
     }
 
@@ -59,9 +54,7 @@ public class Server {
             stringBuilder.append(o.getNickname()).append(" ");
         }
         stringBuilder.setLength(stringBuilder.length()-1);
-        for (ClientHandler o : clients){
-            broadcastMsg(stringBuilder.toString(), false);
-        }
+        broadcastMsg(stringBuilder.toString(), false);
     }
 
     public void sendPrivateMsg (ClientHandler sender, String receiverNickName, String msg){
@@ -106,7 +99,7 @@ public class Server {
             clientHandler.sendMsg("Ник "+ newNickName + " занят");
             return;
         }
-        if (authManager.setNewNickName(oldNickName, newNickName)){
+        if (basicAuthManager.setNewNickName(oldNickName, newNickName)){
             broadcastMsg("Пользователь "+ oldNickName + " сменил ник на "+ newNickName, true);
             clientHandler.setNickname(newNickName);
             clientHandler.sendMsg("/change_nickOK "+ newNickName);

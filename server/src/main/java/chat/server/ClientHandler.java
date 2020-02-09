@@ -1,6 +1,5 @@
 package chat.server;
 
-import javax.swing.text.html.parser.Entity;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class ClientHandler {
                         String msg = in.readUTF();
                         if (msg.startsWith("/auth")) {
                             String[] tokens = msg.split(" ", 3);
-                            String nickFromAuthManager = server.getAuthManager().getNickNameByLoginAndPassword(tokens[1], tokens[2]);
+                            String nickFromAuthManager = server.getBasicAuthManager().getNickNameByLoginAndPassword(tokens[1], tokens[2]);
                             if (nickFromAuthManager != null) {
                                 if (server.isNickBusy(nickFromAuthManager)){
                                     sendMsg("Данный пользователь уже в чате");
