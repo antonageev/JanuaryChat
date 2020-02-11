@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Server {
     private List<ClientHandler> clients;
-    private BasicAuthManager basicAuthManager;
+    private AuthManager basicAuthManager;
     private final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public AuthManager getBasicAuthManager() {
@@ -32,11 +32,11 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } catch (ClassNotFoundException | SQLException e){
+        } catch (RuntimeException e){
             e.printStackTrace();
         } finally {
             if (basicAuthManager != null) {
-                basicAuthManager.closeAuthConnections();
+                basicAuthManager.stop();
             }
         }
     }
