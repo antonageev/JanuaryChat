@@ -1,9 +1,12 @@
 package chat.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler {
     private Socket socket;
@@ -11,6 +14,7 @@ public class ClientHandler {
     private DataOutputStream out;
     private Server server;
     private String nickname;
+    private String confirmedLogin;
 
     public String getNickname() {
         return nickname;
@@ -38,8 +42,10 @@ public class ClientHandler {
                                     continue;
                                 }
                                 nickname = nickFromAuthManager;
-                                sendMsg("/authok " + nickname);
+                                confirmedLogin = tokens[1];
+                                sendMsg("/authok " + nickname + " "+ confirmedLogin); //Добавил логин, чтобы его можно было читать в Controller
                                 server.subscribe(this);
+                                sendMsg(getHistory());
                                 break;
                             } else {
                                 sendMsg("Указан неверный логин/пароль");
@@ -80,6 +86,24 @@ public class ClientHandler {
                     close();
                 }
         }).start();
+    }
+
+    public String getHistory(){
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader("./server/chatHistory.txt"))){
+            List<String> stringList = new ArrayList<>();
+            stringList = Files.readAllLines(Paths.get("./server/chatHistory.txt"));
+
+            int startPosition = 0;
+            if (stringList.size()>100) startPosition = stringList.size()-100;
+                for (int i = startPosition; i < stringList.size(); i++) {
+                    stringBuilder.append(stringList.get(i)).append("\n");
+                }
+        } catch (IOException e){
+            System.out.println("Не удалось открыть файл с историей для чтения");
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
     }
 
 

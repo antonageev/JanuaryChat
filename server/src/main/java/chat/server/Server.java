@@ -1,5 +1,7 @@
 package chat.server;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -45,6 +47,12 @@ public class Server {
         if (withDateTime) msg = String.format("[%s] %s", LocalDateTime.now().format(DTF), msg);
         for (ClientHandler o : clients){
             o.sendMsg(msg);
+        }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("./server/chatHistory.txt", true))){
+            writer.write(msg + "\n");
+        }catch (IOException e){
+            System.out.println("Не удалось записасть сообщение в общую историю чата");
+            e.printStackTrace();
         }
     }
 

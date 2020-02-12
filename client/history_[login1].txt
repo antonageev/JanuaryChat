@@ -1,0 +1,24 @@
+/clients_list supaPupa
+[2020-02-12 22:00:26] supaPupa: hello
+[2020-02-12 22:00:29] supaPupa: adios
+/end_confirm
+/clients_list supaPupa
+supaPupa подключился к чату!/clients_list supaPupa
+
+[2020-02-12 22:51:25] supaPupa: hello
+[2020-02-12 22:51:30] supaPupa: whats up
+[2020-02-12 22:51:36] supaPupa: how are you
+[2020-02-12 22:51:41] supaPupa: ?hey&
+/end_confirm
+/clients_list supaPupa
+supaPupa подключился к чату!/clients_list supaPupa[2020-02-12 22:51:25] supaPupa: hello[2020-02-12 22:51:30] supaPupa: whats up[2020-02-12 22:51:36] supaPupa: how are you[2020-02-12 22:51:41] supaPupa: ?hey&supaPupa вышел из чата/clients_listuser2 подключился к чату!/clients_list user2user2 вышел из чата/clients_listsupaPupa подключился к чату!
+/clients_list supaPupa
+
+[2020-02-12 23:14:48] supaPupa: ksebfsf
+[2020-02-12 23:14:49] supaPupa: aefarg
+[2020-02-12 23:14:50] supaPupa: hythsrefa
+[2020-02-12 23:14:51] supaPupa: cargfst
+[2020-02-12 23:14:52] supaPupa: jyud
+user2 подключился к чату!
+/clients_list supaPupa user2
+/end_confirm

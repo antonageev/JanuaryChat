@@ -10,6 +10,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -38,6 +40,7 @@ public class Controller implements Initializable {
     private Network network;
     private boolean authenticated;
     private String nickname;
+    private String confirmedLogin;
 
     public void setAuthenticated (boolean authenticated){
         this.authenticated = authenticated;
@@ -65,8 +68,9 @@ public class Controller implements Initializable {
                 try {
                     while (true) { // цикл авторизации
                         String msg = network.readMsg();
-                        if (msg.startsWith("/authok")) { //authok nick1
+                        if (msg.startsWith("/authok ")) { //authok nick1 login1
                             nickname = msg.split(" ")[1];
+                            confirmedLogin = msg.split(" ")[2];
                             mainArea.appendText("Вы зашли под ником "+ nickname + "\n");
                             setAuthenticated(true);
                             break;
@@ -75,6 +79,14 @@ public class Controller implements Initializable {
                     }
                     while (true) { // цикл общения с сервером
                         String msg = network.readMsg();
+                        // сюда положим запись всех входящих сообщений в файл!
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter("./client/history_["+confirmedLogin+"].txt", true))){
+                            writer.write(msg + "\n");
+                        } catch (IOException e){
+                            System.out.println("ошибка доступа к файлу локальной истории. Сообщение записать не удалось");
+                            e.printStackTrace();
+                        }
+                        // положили в файл локальной истории.
                         if (msg.startsWith("/")){
                             if (msg.startsWith("/change_nickOK ")){
                                 String[] tokens = msg.split(" ");
