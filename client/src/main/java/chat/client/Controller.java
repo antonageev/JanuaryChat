@@ -94,6 +94,7 @@ public class Controller implements Initializable {
                                 continue;
                             }
                             if (msg.startsWith("/clients_list ")){
+                                System.out.println(msg);
                                 Platform.runLater(() -> {
                                             clientsList.getItems().clear();
                                             String[] tokens = msg.split(" ");

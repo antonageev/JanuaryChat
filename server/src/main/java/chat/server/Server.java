@@ -10,11 +10,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     private List<ClientHandler> clients;
     private AuthManager basicAuthManager;
     private final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private ExecutorService executorService;
 
     public AuthManager getBasicAuthManager() {
         return basicAuthManager;
@@ -24,12 +27,13 @@ public class Server {
         clients = new ArrayList<>();
         try {
             basicAuthManager = new BasicAuthManager();
+            executorService = Executors.newCachedThreadPool();
             try (ServerSocket serverSocket = new ServerSocket(port)) {
                 System.out.println("Сервер стартовал! Ожидаем подключения...");
                 while (true) {
                     Socket socket = serverSocket.accept();
                     System.out.println("Клиент подключен");
-                    new ClientHandler(this, socket);
+                    new ClientHandler(this, socket, executorService);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -40,6 +44,7 @@ public class Server {
             if (basicAuthManager != null) {
                 basicAuthManager.stop();
             }
+            executorService.shutdown();
         }
     }
 

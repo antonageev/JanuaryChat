@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class ClientHandler {
     private Socket socket;
@@ -15,6 +16,7 @@ public class ClientHandler {
     private Server server;
     private String nickname;
     private String confirmedLogin;
+    private ExecutorService handlerExecutorService;
 
     public String getNickname() {
         return nickname;
@@ -24,12 +26,13 @@ public class ClientHandler {
         this.nickname = nickname;
     }
 
-    public ClientHandler(Server server, Socket socket) throws IOException {
+    public ClientHandler(Server server, Socket socket, ExecutorService executorService) throws IOException {
         this.server = server;
         this.socket = socket;
+        this.handlerExecutorService = executorService;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
-        new Thread(() ->{
+        handlerExecutorService.execute(() ->{
                 try {
                     while (true) {
                         String msg = in.readUTF();
@@ -85,7 +88,7 @@ public class ClientHandler {
                 finally {
                     close();
                 }
-        }).start();
+        });
     }
 
     public String getHistory(){
