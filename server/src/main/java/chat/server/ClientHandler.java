@@ -100,7 +100,9 @@ public class ClientHandler {
             int startPosition = 0;
             if (stringList.size()>100) startPosition = stringList.size()-100;
                 for (int i = startPosition; i < stringList.size(); i++) {
+                    if (stringList.get(i).startsWith("h->")){ //отправляются только те сообщения, которые идут через broadcastMsg()
                     stringBuilder.append(stringList.get(i)).append("\n");
+                    }
                 }
         } catch (IOException e){
             System.out.println("Не удалось открыть файл с историей для чтения");

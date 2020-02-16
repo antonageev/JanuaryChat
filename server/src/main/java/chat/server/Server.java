@@ -53,8 +53,15 @@ public class Server {
         for (ClientHandler o : clients){
             o.sendMsg(msg);
         }
+        // Блок записи истории чата.
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("./server/chatHistory.txt", true))){
-            writer.write(msg + "\n");
+            String prefix = "";
+            if (msg.startsWith("/")) {
+                prefix = "s->"; //присваиваем сервисным сообщениям префикс "s->",
+            } else {
+                prefix = "h->"; //обычным сообщениям префикс "h->" - только такие сообщения будут попадать в окно чата.
+            }
+            writer.write(prefix + msg + "\n");
         }catch (IOException e){
             System.out.println("Не удалось записасть сообщение в общую историю чата");
             e.printStackTrace();
