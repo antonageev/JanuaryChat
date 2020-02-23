@@ -1,5 +1,8 @@
 package chat.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,6 +21,7 @@ public class Server {
     private AuthManager basicAuthManager;
     private final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private ExecutorService executorService;
+    private static final Logger LOGGER = LogManager.getLogger("chat.server.Server");
 
     public AuthManager getBasicAuthManager() {
         return basicAuthManager;
@@ -29,10 +33,10 @@ public class Server {
             basicAuthManager = new BasicAuthManager();
             executorService = Executors.newCachedThreadPool();
             try (ServerSocket serverSocket = new ServerSocket(port)) {
-                System.out.println("Сервер стартовал! Ожидаем подключения...");
+                LOGGER.info("Сервер стартовал. Ожидание подключения...");
                 while (true) {
                     Socket socket = serverSocket.accept();
-                    System.out.println("Клиент подключен");
+                    LOGGER.info("Клиент подключился.");
                     new ClientHandler(this, socket, executorService);
                 }
             } catch (IOException e) {

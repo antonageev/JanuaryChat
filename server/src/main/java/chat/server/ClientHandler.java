@@ -1,5 +1,8 @@
 package chat.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -17,6 +20,7 @@ public class ClientHandler {
     private String nickname;
     private String confirmedLogin;
     private ExecutorService handlerExecutorService;
+    private static final Logger LOGGER = LogManager.getLogger("chat.server.ClientHandler");
 
     public String getNickname() {
         return nickname;
@@ -42,6 +46,7 @@ public class ClientHandler {
                             if (nickFromAuthManager != null) {
                                 if (server.isNickBusy(nickFromAuthManager)){
                                     sendMsg("Данный пользователь уже в чате");
+                                    LOGGER.info("Попытка подключиться к чату с использованием Логина активного пользователя");
                                     continue;
                                 }
                                 nickname = nickFromAuthManager;
@@ -49,14 +54,17 @@ public class ClientHandler {
                                 sendMsg("/authok " + nickname + " "+ confirmedLogin); //Добавил логин, чтобы его можно было читать в Controller
                                 server.subscribe(this);
                                 sendMsg(getHistory());
+                                LOGGER.info("Клиент " + nickFromAuthManager + " подключился к чату и получил историю");
                                 break;
                             } else {
                                 sendMsg("Указан неверный логин/пароль");
+                                LOGGER.info("Клиентом указан неверный логин/пароль");
                             }
                         }
                     }
                     while (true) {
                         String msg = in.readUTF();
+                        LOGGER.info("Клиент прислал сообщение/команду: " + msg);
                         if (msg.startsWith("/")) {
                             if (msg.startsWith("/w ")){
                                 String[] tokens = msg.split(" ", 3);
@@ -69,13 +77,14 @@ public class ClientHandler {
                                 String[] tokens = msg.split(" ");
                                 if (tokens.length > 2) {
                                     sendMsg("Новый ник должен быть без пробелов");
+                                    LOGGER.warn("Нарушение "+ nickname + " структуры запроса на смену ника");
                                     continue;
                                 }
                                 server.changeNickName(this, nickname, tokens[1]);
                             }
                             if (msg.equals("/end")) {
                                 out.writeUTF("/end_confirm");
-                                System.out.println("Запрос на выключение сервера от клиента \"/end\"... Выключение ");
+                                LOGGER.info("Запрос на выключение сервера от клиента \"/end\"... Выключение ");
                                 break;
                             }
                         } else {
@@ -121,6 +130,7 @@ public class ClientHandler {
     }
 
     private void close() {
+        LOGGER.info("Закрытие всех соединений в ClientHandler.Close()");
         server.unsubscribe(this);
         nickname = null;
         if (in!=null){

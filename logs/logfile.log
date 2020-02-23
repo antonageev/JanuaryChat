@@ -1,0 +1,25 @@
+INFO  2020-02-23 17:43:00 [main] INFO  chat.server.Server (Server.java36) - Сервер стартовал. Ожидание подключения...
+INFO  2020-02-23 17:43:00 [main] INFO  chat.server.Server (Server.java36) - Сервер стартовал. Ожидание подключения...
+INFO  2020-02-23 17:45:08 [main] INFO  chat.server.Server (Server.java36) - Сервер стартовал. Ожидание подключения...
+INFO  2020-02-23 17:47:27 [main] chat.server.Server (Server.java36) - Сервер стартовал. Ожидание подключения...
+INFO  2020-02-23 17:48:37 [main] chat.server.Server (Server.java:36) - Сервер стартовал. Ожидание подключения...
+INFO  2020-02-23 17:49:52 [main] chat.server.Server (Server.java:39) - Клиент подключился.
+INFO  2020-02-23 17:49:52 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:57) - Клиент supaPupa подключился к чату и получил историю
+INFO  2020-02-23 17:50:04 [main] chat.server.Server (Server.java:39) - Клиент подключился.
+INFO  2020-02-23 17:50:04 [pool-2-thread-2] chat.server.ClientHandler (ClientHandler.java:57) - Клиент user2 подключился к чату и получил историю
+INFO  2020-02-23 17:50:35 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:67) - Клиент прислал сообщение/команду: Ура, теперь нас логируют!
+INFO  2020-02-23 17:50:47 [pool-2-thread-2] chat.server.ClientHandler (ClientHandler.java:67) - Клиент прислал сообщение/команду: Теперь сервак помнит все наши шалости
+INFO  2020-02-23 17:51:07 [pool-2-thread-2] chat.server.ClientHandler (ClientHandler.java:67) - Клиент прислал сообщение/команду: Не хочу, чтобы меня подслушивали.
+INFO  2020-02-23 17:51:10 [pool-2-thread-2] chat.server.ClientHandler (ClientHandler.java:67) - Клиент прислал сообщение/команду: у стен есть уши
+INFO  2020-02-23 17:51:15 [pool-2-thread-2] chat.server.ClientHandler (ClientHandler.java:67) - Клиент прислал сообщение/команду: /end
+INFO  2020-02-23 17:51:15 [pool-2-thread-2] chat.server.ClientHandler (ClientHandler.java:87) - Запрос на выключение сервера от клиента "/end"... Выключение 
+INFO  2020-02-23 17:52:52 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:67) - Клиент прислал сообщение/команду: /change_nick pedro shmedro
+WARN  2020-02-23 17:52:52 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:80) - Нарушение supaPupa структуры запроса на смену ника
+INFO  2020-02-23 17:53:09 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:67) - Клиент прислал сообщение/команду: /end
+INFO  2020-02-23 17:53:09 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:87) - Запрос на выключение сервера от клиента "/end"... Выключение 
+INFO  2020-02-23 17:54:22 [main] chat.server.Server (Server.java:36) - Сервер стартовал. Ожидание подключения...
+INFO  2020-02-23 17:54:42 [main] chat.server.Server (Server.java:39) - Клиент подключился.
+INFO  2020-02-23 17:54:42 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:57) - Клиент supaPupa подключился к чату и получил историю
+INFO  2020-02-23 17:54:55 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:67) - Клиент прислал сообщение/команду: /end
+INFO  2020-02-23 17:54:55 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:87) - Запрос на выключение сервера от клиента "/end"... Выключение 
+INFO  2020-02-23 17:54:55 [pool-2-thread-1] chat.server.ClientHandler (ClientHandler.java:133) - Закрытие всех соединений в ClientHandler.Close()
